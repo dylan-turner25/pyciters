@@ -3,6 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
+def hypothetical_function(x):
+    print(x)
 
 def ers2bib(url):
     """

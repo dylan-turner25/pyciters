@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import re
 
 def hypothetical_function(x):
-    print(x)
+    print(x*2)
 
 def ers2bib(url):
     """

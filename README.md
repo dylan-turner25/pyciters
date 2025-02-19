@@ -18,13 +18,15 @@ pip install citers
 ```
 
 ## Usage
-```console
+```python
 # import the citer_ers function
 from pyciters.ers2bib import cite_ers
 
 # call the function with a url to a publication to cite
 cite_ers("https://www.ers.usda.gov/publications/pub-details?pubid=108166")
+```
 
+```console
 @misc{Turner_2023,
 author = {Dylan Turner AND Francis Tsiboe AND Katherine L. Baldwin AND Brian Williams AND Erik Dohlman AND Gregory Astill AND Sharon Raszap Skorbiansky AND Vidalina Abadam AND D. Adeline Yeh AND Russell Knight},
 title = {Federal Programs for Agricultural Risk Management},

@@ -1,5 +1,5 @@
 import pytest
-from src.pyciters.ers2bib import gen_cite_key
+from pyciters.ers2bib import gen_cite_key
 def test_gen_cite_key():
     """
     Test the gen_cite_key function.

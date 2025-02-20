@@ -11,9 +11,15 @@
 -----
 
 ## Table of Contents
-
+- [Overview](#overview)
 - [Installation](#installation)
+- [Usage](#usage)
+- [Other examples](#Other examples)
 - [License](#license)
+
+## Overview
+The [USDA Economic Research Service](https://www.ers.usda.gov/) (ERS) publishes a huge amount of research relevant to the agricultural sector. These research reports are often relevant to other academic research. The `pyciters` package is a simple utility that generates bibtex citation entries using the url of a ERS report in an attempt to make life slightly easier for anyone that cites these reports on a regular basis. 
+
 
 ## Installation
 The `pyciters` package can be installed directly from github.
@@ -22,7 +28,7 @@ pip install git+https://github.com/dylan-turner25/pyciters
 ```
 
 ## Usage
-The `pyciters` has a single primary function, `cite_ers`, which takes a url or list of urls corresponding to USDA ERS publications and returns bibtex citation entries than can be copied as plain text into a .bib file or used in any citation manager that can import bibtex entries (ex: Zotero). 
+The `pyciters` has a single primary function, `cite_ers`, which takes a url or list of urls corresponding to [USDA ERS publications](https://www.ers.usda.gov/publications) and returns bibtex citation entries than can be copied as plain text into a .bib file or used in any citation manager that can import bibtex entries (ex: Zotero). 
 
 ```python
 # import the citer_ers function

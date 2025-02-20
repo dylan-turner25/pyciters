@@ -6,7 +6,6 @@
 -->
 
 [![Python package](https://github.com/dylan-turner25/pyciters/actions/workflows/python-package.yml/badge.svg)](https://github.com/dylan-turner25/pyciters/actions/workflows/python-package.yml)
-
 [![codecov](https://codecov.io/gh/dylan-turner25/pyciters/graph/badge.svg?token=Z65ezjE7oe)](https://codecov.io/gh/dylan-turner25/pyciters)
 -----
 
@@ -14,7 +13,7 @@
 - [Overview](#overview)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Other examples](#Other examples)
+- [Examples](#examples)
 - [License](#license)
 
 ## Overview
@@ -52,7 +51,7 @@ url = {https://www.ers.usda.gov/publications/pub-details?pubid=108166}
 ```
 The above output can be copied and if using [Zotero]("https://www.zotero.org/"), selecting `File->Import from Clipboard` will import the citation into your library. 
 
-## Other examples
+## Examples
 Multiple urls can be passed to the `citer_ers` function if there are multiple publications to generate citatios for.
 ```python
 # list of urls to generate citations for

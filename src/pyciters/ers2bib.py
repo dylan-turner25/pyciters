@@ -1,4 +1,3 @@
-#%%
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -92,7 +91,7 @@ def gen_cite_key(authors, date):
 
     return(key)
 
-def cite_ers(pubs, type = "bibtex"):
+def cite_ers(pubs):
 
     meta_data = get_meta_data(pubs)
 
@@ -123,5 +122,6 @@ def cite_ers(pubs, type = "bibtex"):
                 f"}}"
             )
 
-    print(bibtex.strip('"\''))
+        print(bibtex.strip('"\''))
+
 

@@ -6,7 +6,7 @@
 -->
 
 [![Python package](https://github.com/dylan-turner25/pyciters/actions/workflows/python-package.yml/badge.svg)](https://github.com/dylan-turner25/pyciters/actions/workflows/python-package.yml)
-
+[![codecov](https://codecov.io/gh/dylan-turner25/pyciters/graph/badge.svg?token=Z65ezjE7oe)](https://codecov.io/gh/dylan-turner25/pyciters)
 -----
 
 ## Table of Contents

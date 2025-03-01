@@ -27,7 +27,7 @@ pip install git+https://github.com/dylan-turner25/pyciters
 ```
 
 ## Usage
-The `pyciters` has a single module `ers2bib` and single class, `Publication`, which takes the url or list of urls corresponding to [USDA ERS publications](https://www.ers.usda.gov/publications) as an single argument. The resulting publication objects has an attribute `meta_data` that contains each publications meta data fields in a data frame.
+The `pyciters` has a single module `ers2bib` and single class, `Publication`, which takes the url or list of urls corresponding to [USDA ERS publications](https://www.ers.usda.gov/publications) as an single argument. The resulting publication object has an attribute `meta_data` that contains each publication's meta data fields in a data frame.
 
 ```python
 from pyciters import ers2bib
@@ -42,7 +42,7 @@ pubs.meta_data
 
 ```
 
-Using the `generate_citation` method will returns bibtex citation entries than can be copied as plain text into a .bib file or used in any citation manager that can import bibtex entries (ex: Zotero). 
+Using the `generate_citation` method will return bibtex citation entries that can be copied as plain text into a .bib file or used in any citation manager that can import bibtex entries (ex: Zotero). 
 
 ```python
 pubs.generate_citation()
@@ -60,7 +60,7 @@ number = {EIB-259},
 url = {https://www.ers.usda.gov/publications/pub-details?pubid=108166}
 }
 ```
-The above output can be copied and if using [Zotero]("https://www.zotero.org/"), selecting `File->Import from Clipboard` will import the citation into your library. 
+The above output can be copied, and if using [Zotero]("https://www.zotero.org/"), selecting `File->Import from Clipboard` will import the citation into your library. 
 
 ## Examples
 

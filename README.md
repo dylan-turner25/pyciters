@@ -27,14 +27,25 @@ pip install git+https://github.com/dylan-turner25/pyciters
 ```
 
 ## Usage
-The `pyciters` has a single primary function, `cite_ers`, which takes a url or list of urls corresponding to [USDA ERS publications](https://www.ers.usda.gov/publications) and returns bibtex citation entries than can be copied as plain text into a .bib file or used in any citation manager that can import bibtex entries (ex: Zotero). 
+The `pyciters` has a single module `ers2bib` and single class, `Publication`, which takes the url or list of urls corresponding to [USDA ERS publications](https://www.ers.usda.gov/publications) as an single argument. The resulting publication objects has an attribute `meta_data` that contains each publications meta data fields in a data frame.
 
 ```python
-# import the citer_ers function
-from pyciters.ers2bib import cite_ers
+from pyciters import ers2bib
 
-# call the function with a url to a publication to cite
-cite_ers("https://www.ers.usda.gov/publications/pub-details?pubid=108166")
+# create a publication object
+pubs = ers2bib.Publication(["https://www.ers.usda.gov/publications/pub-details?pubid=110093",
+                "https://www.ers.usda.gov/publications/pub-details?pubid=108166"])
+
+
+# pull up the publication meta data
+pubs.meta_data
+
+```
+
+Using the `generate_citation` method will returns bibtex citation entries than can be copied as plain text into a .bib file or used in any citation manager that can import bibtex entries (ex: Zotero). 
+
+```python
+pubs.generate_citation()
 ```
 Example output:
 ```console
@@ -52,51 +63,15 @@ url = {https://www.ers.usda.gov/publications/pub-details?pubid=108166}
 The above output can be copied and if using [Zotero]("https://www.zotero.org/"), selecting `File->Import from Clipboard` will import the citation into your library. 
 
 ## Examples
-Multiple urls can be passed to the `citer_ers` function if there are multiple publications to generate citatios for.
-```python
-# list of urls to generate citations for
-pubs_to_cite = ["https://www.ers.usda.gov/publications/pub-details?pubid=110093",
-                "https://www.ers.usda.gov/publications/pub-details?pubid=108166"]
-
-# pass the list to the cite_ers function
-cite_ers(pubs_to_cite)
-
-```
-The output is multiple bibtext entries as plain text than can be copied into a .bib file.
-
-```console
-@misc{Baldwin_2024,
-author = {Katherine L. Baldwin AND Dylan Turner AND Francis Tsiboe},
-title = {Recent Developments in Ad Hoc Assistance Programs for Agricultural Producers},
-publisher = {U.S. Department of Agriculture, Economic Research Service},
-howpublished = {Economic Information Bulletin},
-year = {2024},
-month = {9},
-number = {EIB-278},
-url = {https://www.ers.usda.gov/publications/pub-details?pubid=110093}
-}
-
-@misc{Turner_2023,
-author = {Dylan Turner AND Francis Tsiboe AND Katherine L. Baldwin AND Brian Williams AND Erik Dohlman AND Gregory Astill AND Sharon Raszap Skorbiansky AND Vidalina Abadam AND D. Adeline Yeh AND Russell Knight},
-title = {Federal Programs for Agricultural Risk Management},
-publisher = {U.S. Department of Agriculture, Economic Research Service},
-howpublished = {Economic Information Bulletin},
-year = {2023},
-month = {12},
-number = {EIB-259},
-url = {https://www.ers.usda.gov/publications/pub-details?pubid=108166}
-}
-
-```
 
 The publication IDs associated with the ERS publication can also be used to generate the citation.
 
 ```python
-# list of publication IDs to generate citations for
-pubs_to_cite = [110093,108166]
+# create publication object using report id numbers
+pubs = ers2bib.Publication([110093,108166])
 
-# pass the list to the cite_ers function
-cite_ers(pubs_to_cite)
+# create the bibtex entries
+pubs.generate_citation()
 
 ```
 

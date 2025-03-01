@@ -1,115 +1,100 @@
+#%%
 import requests
 from bs4 import BeautifulSoup
-import re
 import pandas as pd
 import json
 from datetime import datetime
 
-def get_meta_data(pubs):
+class Publication:
     """
-    Scrapes publication meta data from the ERS website
+    A class to represent a publication and generate citations for it.
+    Attributes
+    ----------
+    pubs : list
+        A list of publication URLs or IDs.
+    meta_data : dict
+        A dictionary to store metadata of publications.
 
-    Args:
-        pubs (int,string,or list): can be a single 6 digit publication id, a url string, or list 
-        of multiple ids/urls that represent the publications to pull meta data for
- 
-    Returns:
-        Pandas data frame: a data frame with each row representing a different publication and
-         each column corresponding to a piece of meta data 
-    
-    Examples:
-        #>>> get_meta_data(110765)
-        #>>> get_meta_data("https://www.ers.usda.gov/publications/pub-details?pubid=110765")
-        #>>> get_meta_data([110765,110767])
+    Methods
+    -------
+    fetch_meta_data():
+        Fetches metadata for each publication and stores it in a DataFrame.
+    gen_cite_key(authors, date):
+        Generates a citation key based on the first author's last name and the publication year.
+    generate_citation():
+        Generates and prints BibTeX citations for the publications.
     """
-    # if the pubs argument was entered as a single character string, 
-    # or numeric value for publication id, convert it to a list with a single element.
-    if isinstance(pubs, str) or isinstance(pubs, int):
-        pubs = [pubs]
+        
+    def __init__(self, pubs):
+        """
+        Initializes the instance with a list of publications.
+        Args:
+            pubs (str, int, or list): A single publication (as a string or integer) 
+                                      or a list of publications.
+        Attributes:
+            pubs (list): A list of publications.
+            meta_data (dict): A dictionary to store metadata related to the publications.
+        """
 
-    # initialize a dictionary to store meta data for each pubs
-    meta_data = {}
+        if isinstance(pubs, str) or isinstance(pubs, int):
+            self.pubs = [pubs]
+        else:
+            self.pubs = pubs
+        self.meta_data = {}
 
-    # loop over each pubs and get the meta data
-    for i in pubs:
-    
-        # if the pubs is a integer representing a publication id, 
-        # add the base pubs to it
-        if isinstance(i, int):
-            i = "https://www.ers.usda.gov/publications/pub-details?pubid=" + str(i)
+        for i in self.pubs:
+            if isinstance(i, int):
+                i = f"https://www.ers.usda.gov/publications/pub-details?pubid={i}"
 
-        # get the pubs
-        response = requests.get(i)
+            response = requests.get(i)
+            report_no = BeautifulSoup(response.content, 'html.parser').find("li", class_="usa-collection__meta-item usa-tag").contents[0]
+            json_data = BeautifulSoup(response.content, 'html.parser').find("script", type="application/json").contents[0]
+            data_dict = json.loads(json_data)
+            data_layer = data_dict['dataLayer']['page']
+            pub_id = data_layer["pubId"]
+            data_layer['authors'] = [data_layer['authors']]
+            data_layer['breadcrumbs'] = [data_layer['breadcrumbs']]
+            data_layer['report_no'] = report_no
+            self.meta_data[pub_id] = pd.DataFrame(data_layer)
 
-        # get report number, which isn't listed with the other meta data
-        report_no = BeautifulSoup(response.content, 'html.parser').find("li", class_="usa-collection__meta-item usa-tag").contents[0]
+        self.meta_data = pd.concat(self.meta_data)
 
-        # locate the json string with all the publication meta data
-        json_data = BeautifulSoup(response.content, 'html.parser').find("script", type="application/json").contents[0]
+    @staticmethod
+    def gen_cite_key(authors, date):
+        """
+        Generates a citation key based on the first author's last name and the year of publication.
+        Args:
+            authors (list of str): A list of author names, where each name is a string.
+            date (str): The publication date in the format 'YYYY-MM-DD'.
+        Returns:
+            str: A citation key in the format 'LastName_Year'.
+        """
 
-        # convert the json string to a dictionary
-        dict = json.loads(json_data)
+        date = datetime.strptime(date, "%Y-%m-%d")
+        year = date.year
+        first_author = authors[0].split(" ")
+        key = first_author[-1] + "_" + str(year)
+        return key
 
-        # select the data layer
-        dataLayer = dict['dataLayer']['page']
+    def generate_citation(self):
+        """
+        Generates BibTeX citations for each publication in the metadata.
+        This method fetches metadata for publications, processes each publication's
+        metadata to create a BibTeX citation, and prints the citation.
 
-        # get the publication id to label the dictionary entry
-        pub_id = dataLayer["pubId"]
+        """
+        
+        for i in range(len(self.meta_data)):
+            pub_meta_data = self.meta_data.iloc[i]
+            authors = " AND ".join(pub_meta_data['authors'])
+            title = pub_meta_data['title']
+            date = datetime.strptime(pub_meta_data['date'], "%Y-%m-%d")
+            pub_type_long = pub_meta_data['siteSectionSecondLevel'].replace("Publications:", "").strip()
+            cite_key = self.gen_cite_key(pub_meta_data['authors'], pub_meta_data['date'])
+            pub_url = f"https://www.ers.usda.gov/publications/pub-details?pubid={pub_meta_data['pubId']}"
+            report_no = pub_meta_data["report_no"]
 
-        # for dictionary entries that have multiple elements, 
-        # make sure they are lists so that they are contained 
-        # in a single data frame cell later
-        dataLayer['authors'] = [dataLayer['authors']]
-        dataLayer['breadcrumbs'] = [dataLayer['breadcrumbs']]
-
-        # add the report number to the dataLayer
-        dataLayer['report_no'] = report_no
-
-        # add data layers to the meta data dictionary
-        meta_data[pub_id] = pd.DataFrame(dataLayer)
-
-    # concat the meta data dictionary into a data frame
-    meta_data = pd.concat(meta_data)
-
-    # return a data frame with publication meta data for each pubs
-    return(meta_data)
-
-def gen_cite_key(authors, date):
-  
-    # convert date string to a datetime object
-    date = datetime.strptime(date, "%Y-%m-%d")
-
-    # isolate the year
-    year = date.year
-
-    # extract the first author from the list of authors
-    first_author = authors[0].split(" ")
-
-    # create a citation key using the last name of the first authro
-    # and year of publication
-    key = first_author[len(first_author)-1] + "_" + str(year)
-
-    return(key)
-
-def cite_ers(pubs):
-
-    meta_data = get_meta_data(pubs)
-
-    for i in range(0,len(meta_data)):
-        pub_meta_data = meta_data.iloc[i]
-
-        # isolate each piece of meta data and get it into the 
-        # approirate form for entering into a bibtex entry
-        authors = " AND ".join(pub_meta_data['authors'])
-        title = pub_meta_data['title']
-        date = datetime.strptime(pub_meta_data['date'], "%Y-%m-%d")
-        pub_type_short = pub_meta_data['series']
-        pub_type_long = pub_meta_data['siteSectionSecondLevel'].replace("Publications:", "").strip()
-        cite_key = gen_cite_key(pub_meta_data['authors'], pub_meta_data['date'])
-        pub_url = "https://www.ers.usda.gov/publications/pub-details?pubid=" + str(pub_meta_data['pubId'])
-        report_no = pub_meta_data["report_no"]
-
-        bibtex = (
+            bibtex = (
                 f"@misc{{{cite_key},\n"
                 f"author = {{{authors}}},\n"
                 f"title = {{{title}}},\n"
@@ -122,6 +107,7 @@ def cite_ers(pubs):
                 f"}}"
             )
 
-        print(bibtex.strip('"\''))
+            print(bibtex.strip('"\''))
+
 
 
